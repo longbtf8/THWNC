@@ -1,0 +1,95 @@
+@model List<Product>
+
+@{
+    ViewData["Title"] = "Quản lý hàng hóa";
+}
+
+<h1>Quản lý hàng hóa</h1>
+
+<table class="table table-bordered table-striped mt-4">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Tên hàng</th>
+            <th>Đơn giá</th>
+            <th>Mô tả</th>
+            <th>Xử lý</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (var i = 0; i < Model.Count; i++)
+        {
+            <tr id="row-@Model[i].ProductID">
+                <td>@(i + 1)</td>
+                <td>@Model[i].ProductName</td>
+                <td>
+                    <span id="price-@Model[i].ProductID"> @Model[i].ProductPrice.ToString("N0") VND</span>
+                    @if (Model[i].ProductPrice >= 100000)
+                    {
+                        <a href="javascript:void(0);" id="btn-discount-@Model[i].ProductID"
+                           onclick="giamGia(@Model[i].ProductID)" class="ms-2 text-decoration-none">
+                            ︾ Giảm giá
+                        </a>
+                    }
+                </td>
+                <td>@Model[i].Description</td>
+                <td>
+                    <a href="javascript:void(0);" onclick="deleteProduct(@Model[i].ProductID)" class="text-danger">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        function deleteProduct(id) {
+            if (!confirm("Có chắc chắn xóa không?")) {
+                return;
+            }
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", `/Products/DeleteAjax?id=${id}`, true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const data = JSON.parse(xhr.responseText);
+                    if (data.success) {
+                        const row = document.getElementById(`row-${id}`);
+                        if (row) {
+                            row.style.transition = "opacity 0.4s ease";
+                            row.style.opacity = "0";
+                            setTimeout(() => row.remove(), 400);
+                        }
+                    } else {
+                        alert("Xóa thất bại!");
+                    }
+                }
+            };
+            xhr.onerror = function () {
+                alert("Lỗi kết nối đến server!");
+            };
+            xhr.send();
+
+        }
+
+
+        function giamGia(id) {
+            if (!confirm("Có chắc chắn giảm giá không?")) return;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", `/Products/Giamgia?id=${id}`, true);
+
+            xhr.onload = () => {
+                if(xhr.status = 200){
+                    const response = JSON.parse(xhr.responseText);
+                    if(response.success = true){    
+                        const priceSpan = document.getElementById(`price-${id}`);
+                        if(priceSpan){
+                            priceSpan.innerText = Number(response.priceSpan)
+                        }
+                    }
+                }
+            }
+        }
+
+    </script>
+}

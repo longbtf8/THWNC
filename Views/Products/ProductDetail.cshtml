@@ -1,0 +1,26 @@
+@model Product
+
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+}
+
+<h1>Chi tiết sản phẩm</h1>
+
+<dl class="row mt-4">
+    <dt class="col-sm-3">Mã mặt hàng</dt>
+    <dd class="col-sm-9">@Model.ProductID</dd>
+
+    <dt class="col-sm-3">Tên mặt hàng</dt>
+    <dd class="col-sm-9">@Model.ProductName</dd>
+
+    <dt class="col-sm-3">Ảnh đại diện</dt>
+    <dd class="col-sm-9">@Model.ImageURL</dd>
+
+    <dt class="col-sm-3">Đơn giá</dt>
+    <dd class="col-sm-9">@Model.ProductPrice.ToString("N0") VND</dd>
+
+    <dt class="col-sm-3">Mô tả</dt>
+    <dd class="col-sm-9">@Model.Description</dd>
+</dl>
+
+<a asp-action="ProductList" class="btn btn-secondary">Quay lại</a>
